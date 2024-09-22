@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tampereen tapahtumat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        nav {
+            background-color: #000000;
+            padding: 10px;
+            width: 100%;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex; 
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin-right: 20px; 
+        }
+
+        nav ul li a {
+            color: white; 
+            text-decoration: none; 
+            font-weight: bold;
+            padding: 5px 10px;
+        }
+
+        nav ul li a:hover {
+            background-color: #555;
+            border-radius: 10px; 
+        }
+
+        #vastaus {
+            justify-content: space-between;
+            width: 60%;
+            padding: 20px;
+            margin: 0 auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="tapahtumat.html">Tampereen tapahtumat</a></li>
+            <li><a href="saa.html">Säätiedot</a></li>
+        </ul>
+    </nav>
+
+    <div id="vastaus"></div>
+
+    <script>
+        // Tapahtumien haku
+        fetch('https://api.visittampere.com/api/v1/eventztoday/event/all/?format=json&lang=fi&limit=10')
+        .then(function(response) { 
+            return response.json();
+        })
+        .then(function(responseJson) {
+            tapahtumat(responseJson); 
+        })
+        .catch(function(error) { 
+            document.getElementById("vastaus").innerHTML = "<p>Tietoa ei pystytä hakemaan</p>" + error;
+        });
+
+        // Tapahtumien näyttäminen
+        function tapahtumat(data) {
+            var teksti = "<h1>Tampereella tapahtuu</h1>";
+            for (var i = 0; i < data.length; i++) {
+                teksti += "<h3>" + data[i].name + "</h3>";
+                teksti += "<p>" + data[i].description + "</p>";
+                teksti += "<p> <a href='" + data[i].url + "'>" + data[i].url + "</a></p>";
+            }
+            document.getElementById("vastaus").innerHTML = teksti;
+        }
+    </script>
+</body>
+</html>

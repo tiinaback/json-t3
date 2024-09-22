@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        nav {
+            background-color: #000000;
+            padding: 10px;
+            width: 100%;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex; 
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin-right: 20px; 
+        }
+
+        nav ul li a {
+            color: white; 
+            text-decoration: none; 
+            font-weight: bold;
+            padding: 5px 10px;
+        }
+
+        nav ul li a:hover {
+            background-color: #555;
+            border-radius: 10px; 
+        }
+
+        #vastaus {
+            display: flex;
+            justify-content: space-between;
+            width: 60%;
+            padding: 20px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .weather-box {
+            border: 1px solid #ddd;
+            padding: 20px;
+            width: 45%;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        .weather-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px; 
+        }
+
+        img {
+            width: 50px; 
+        }
+
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="tapahtumat.html">Tampereen tapahtumat</a></li>
+            <li><a href="saa.html">Säätiedot</a></li>
+        </ul>
+    </nav>
+
+    <h1>Sää - siitä aina on jotain kerrottavaa</h1>
+    <p>Millainen sää Helsingissä on? Entä Tampereella?</p>
+
+    <div id="vastaus">
+        <div id="helsinki" class="weather-box"></div>
+        <div id="tampere" class="weather-box"></div>
+    </div>
+
+    <script>
+        // Helsingin säätietojen haku
+        fetch('https://api.openweathermap.org/data/2.5/weather?lang=fi&q=helsinki&units=metric&APPID=665ecd56dfc08dbb50feb8b8f5034e28')
+        .then(function(response) { return response.json(); })
+        .then(function(responseJson) {
+            saa(responseJson, "helsinki");
+        })
+        .catch(function(error) { 
+            document.getElementById("helsinki").innerHTML = "<p>Helsingin tietoja ei pystytä hakemaan</p>" + error;
+        });
+
+        // Tampereen säätietojen haku
+        fetch('https://api.openweathermap.org/data/2.5/weather?lang=fi&q=tampere&units=metric&APPID=665ecd56dfc08dbb50feb8b8f5034e28')
+        .then(function(response) { return response.json(); })
+        .then(function(responseJson) {
+            saa(responseJson, "tampere");
+        })
+        .catch(function(error) { 
+            document.getElementById("tampere").innerHTML = "<p>Tampereen tietoja ei pystytä hakemaan</p>" + error;
+        });
+
+        // Säätietojen näyttäminen
+        function saa(data, city) {
+            var teksti = "<h2>" + data.name + "</h2>";
+            teksti += "<div class='weather-info'>";
+            teksti += "<p>Kuvaus: " + data.weather[0].description + "</p>";
+            teksti += "<p>Lämpötila: " + data.main.temp + " &deg;C</p>";
+            teksti += "<p>Tuulen nopeus: " + data.wind.speed + " m/s</p>";
+            var kuva = 'http://openweathermap.org/img/w/' + data.weather[0].icon + '.png';
+            teksti += "<img src='" + kuva + "' alt='Säätilan kuva'>";
+            teksti += "</div>";
+            document.getElementById(city).innerHTML = teksti;
+        }
+    </script>
+</body>
+</html>
